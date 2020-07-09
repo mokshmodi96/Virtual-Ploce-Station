@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int id = menuItem.getItemId();
                 switch (id) {
                     case R.id.nav_item_one:
+                        Intent i = new Intent(MainActivity.this,FirRegister.class);
+                        startActivity(i);
                         break;
                     case R.id.nav_item_two:
                         break;

@@ -6,10 +6,10 @@
             android:title="@string/register_a_complaint" />
         <item android:id="@+id/nav_item_two"
             android:icon="@drawable/ic_launcher_foreground"
-            android:title="@string/call_us" />
+            android:title="@string/contact_us" />
         <item android:id="@+id/nav_item_three"
             android:icon="@drawable/ic_launcher_foreground"
-            android:title="@string/contact_us" />
+            android:title="@string/message_us" />
         <item android:id="@+id/nav_item_four"
             android:icon="@drawable/ic_launcher_foreground"
             android:title="@string/map_appearance" />
