@@ -15,4 +15,5 @@
     <string name="contact_us">Contact Us!</string>
     <string name="call_us">Call Us!</string>
     <string name="register_a_complaint">Register A Complaint</string>
+    <string name="mapbox_key">pk.eyJ1IjoibW9rc2htb2RpOTYiLCJhIjoiY2tjY3ZsN2xoMDhudzJ4cDZiZmJyeDFidCJ9.QiZZ201ADdHOYMyk8z0zuw</string>
 </resources>
