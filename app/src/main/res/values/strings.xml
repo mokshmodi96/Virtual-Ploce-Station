@@ -16,4 +16,21 @@
     <string name="call_us">Call Us!</string>
     <string name="register_a_complaint">Register A Complaint</string>
     <string name="mapbox_key">pk.eyJ1IjoibW9rc2htb2RpOTYiLCJhIjoiY2tjY3ZsN2xoMDhudzJ4cDZiZmJyeDFidCJ9.QiZZ201ADdHOYMyk8z0zuw</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="map_appearance">Map Appearence</string>
+    <string name="select_a_theme">Select A Theme</string>
+    <string name="light_map">Light Map</string>
+    <string name="dark_map">Dark Map</string>
+    <string name="traffic_dark_map">Traffic Dark Map</string>
+    <string name="traffic_map">Traffic Map</string>
+    <string name="satalite">Satalite</string>
 </resources>

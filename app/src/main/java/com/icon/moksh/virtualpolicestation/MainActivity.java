@@ -3,16 +3,15 @@ package com.icon.moksh.virtualpolicestation;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
@@ -22,6 +21,7 @@ import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
@@ -45,19 +45,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
-    private FloatingActionButton floatingActionButton;
     private MapView mapView;
     private MapboxMap mapboxMap;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+    private SharedPreferences sharedPreferences;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+//    public static final int CALL_PERMISSION = 99;
+//    public static final int READ_WRITE_PERMISSION = 100;
     private static final long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     private static final long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
     private PermissionsManager permissionsManager;
     private LocationEngine locationEngine;
     private LocationChangeListeningActivityLocationCallback callback =
             new LocationChangeListeningActivityLocationCallback(this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,24 +67,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+        sharedPreferences = getSharedPreferences("MyPreference", MODE_PRIVATE);
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.navigation);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_app_bar_open_drawer_description, R.string.nav_app_bar_navigate_up_description);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
+                int id = menuItem.getItemId();
+                switch (id) {
                     case R.id.nav_item_one:
                         break;
                     case R.id.nav_item_two:
                         break;
                     case R.id.nav_item_three:
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/917096000020?text=I'm%20interested%20in%20your%20car%20for%20sale"));
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/917096000020?text=Hello%20Would%20Like%20To%20Talk"));
                         startActivity(browserIntent);
+                        break;
+                    case R.id.nav_item_four:
+                        Intent intent = new Intent(MainActivity.this, appearance.class);
+                        startActivity(intent);
+                        finish();
                         break;
                     default:
                         return true;
@@ -143,14 +150,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-
-        mapboxMap.setStyle(Style.TRAFFIC_NIGHT,
-                new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        enableLocationComponent(style);
-                    }
-                });
+        String theme = sharedPreferences.getString("Theme", "");
+        if(theme!=null && !theme.equals("")) {
+            mapboxMap.setStyle(theme,
+                    new Style.OnStyleLoaded() {
+                        @Override
+                        public void onStyleLoaded(@NonNull Style style) {
+                            enableLocationComponent(style);
+                        }
+                    });
+        }else{
+            mapboxMap.setStyle(Style.SATELLITE,
+                    new Style.OnStyleLoaded() {
+                        @Override
+                        public void onStyleLoaded(@NonNull Style style) {
+                            enableLocationComponent(style);
+                        }
+                    });
+        }
+        mapboxMap.setCameraPosition(new CameraPosition.Builder().zoom(10).build());
     }
 
     /**
@@ -178,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 // Set the component's camera mode
             locationComponent.setCameraMode(CameraMode.TRACKING);
-
 // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
@@ -188,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             permissionsManager.requestLocationPermissions(this);
         }
     }
+
 
     /**
      * Set up the LocationEngine and the parameters for querying the device's location
