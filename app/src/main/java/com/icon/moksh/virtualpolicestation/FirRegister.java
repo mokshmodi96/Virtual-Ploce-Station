@@ -13,7 +13,7 @@ public class FirRegister extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fir_register);
         WebView webView = findViewById(R.id.webview);
-        webView.loadUrl("http://192.168.1.9:8080/VPS/registerfir.php");
+        webView.loadUrl("http://192.168.1.9:8080/VPSAdminPanel/registerfir.php");
         webView.setWebViewClient(new MyBrowser());
     }
 
