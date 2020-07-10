@@ -1,9 +1,11 @@
 package com.icon.moksh.virtualpolicestation;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.net.Uri;
@@ -41,6 +43,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -50,11 +54,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DrawerLayout drawerLayout;
     private SharedPreferences sharedPreferences;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-//    public static final int CALL_PERMISSION = 99;
-//    public static final int READ_WRITE_PERMISSION = 100;
+    public static final int My_PERMISSION = 100;
     private static final long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     private static final long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
-    private PermissionsManager permissionsManager;
     private LocationEngine locationEngine;
     private LocationChangeListeningActivityLocationCallback callback =
             new LocationChangeListeningActivityLocationCallback(this);
@@ -81,10 +83,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int id = menuItem.getItemId();
                 switch (id) {
                     case R.id.nav_item_one:
-                        Intent i = new Intent(MainActivity.this,FirRegister.class);
+                        Intent i = new Intent(MainActivity.this, FirRegister.class);
                         startActivity(i);
                         break;
                     case R.id.nav_item_two:
+                        checkPermission(Manifest.permission.CALL_PHONE);
+                        Intent call = new Intent(MainActivity.this, CallActivity.class);
+                        startActivity(call);
                         break;
                     case R.id.nav_item_three:
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/917096000020?text=Hello%20Would%20Like%20To%20Talk"));
@@ -101,6 +106,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         });
+    }
+
+    public void checkPermission(String permission) {
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{
+                    permission}, My_PERMISSION);
+        } else {
+            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode,
+                        permissions,
+                        grantResults);
+
+        if (requestCode == My_PERMISSION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this,
+                        "Call Permission Granted",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+            else {
+                Toast.makeText(MainActivity.this,
+                        "Call Permission Denied",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
     }
 
     @Override
@@ -153,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
         String theme = sharedPreferences.getString("Theme", "");
-        if(theme!=null && !theme.equals("")) {
+        if (theme != null && !theme.equals("")) {
             mapboxMap.setStyle(theme,
                     new Style.OnStyleLoaded() {
                         @Override
@@ -161,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             enableLocationComponent(style);
                         }
                     });
-        }else{
+        } else {
             mapboxMap.setStyle(Style.SATELLITE,
                     new Style.OnStyleLoaded() {
                         @Override
@@ -203,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             initLocationEngine();
         } else {
-            permissionsManager = new PermissionsManager(this);
+            PermissionsManager permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
     }
@@ -222,12 +264,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         locationEngine.requestLocationUpdates(request, callback, getMainLooper());
         locationEngine.getLastLocation(callback);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -317,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }

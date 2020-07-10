@@ -52,4 +52,10 @@ public class appearance extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(appearance.this,MainActivity.class);
+        startActivity(intent);
+    }
 }
